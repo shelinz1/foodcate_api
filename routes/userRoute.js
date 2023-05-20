@@ -129,4 +129,18 @@ userRouter.put(
   })
 );
 
+userRouter.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const users = await User.find();
+
+    if (users) {
+      res.status(200).send(users);
+    } else {
+      res.status(404);
+      throw new Error("Users not found");
+    }
+  })
+);
+
 module.exports = userRouter;
