@@ -4,6 +4,7 @@ const connectDb = require("./utils/database");
 const cors = require("cors");
 const userRouter = require("./routes/userRoute.js");
 const data = require("./utils/data");
+const { errorHandler } = require("./middleware/errorMiddleware");
 
 // for env files
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(cors());
 
 app.use("/api/users", userRouter);
 
+app.use(errorHandler);
 if (process.env.NODE_ENV === "production") {
   app.get("/", (req, res) => {
     res.send(
