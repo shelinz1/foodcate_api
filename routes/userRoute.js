@@ -19,7 +19,8 @@ userRouter.post("/register", async (req, res) => {
   await User.findOne({ email }).then((user) => {
     if (user) {
       res.status(400).json({ message: "You are already a registered user" });
-      //   throw new Error("You are already a registered user");
+      // res.status(400);
+      // throw new Error("You are already a registered user");
     }
   });
 
@@ -73,6 +74,16 @@ userRouter.post("/login", async (req, res) => {
   } else {
     res.status(401);
     throw new Error("Email or Password not registered.");
+  }
+});
+
+userRouter.get("/users", async (req, res) => {
+  const users = await User.find({});
+
+  if (users) {
+    res.status(200).json({ message: { users } });
+  } else {
+    res.status(401).json({ message: "users not found" });
   }
 });
 module.exports = userRouter;
