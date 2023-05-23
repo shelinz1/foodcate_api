@@ -1,12 +1,13 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const asyncHandler = require("express-async-handler");
 
 //GENEREATE JWT TOKEN
 const getToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
 
-const guide = async (req, res, next) => {
+const guide = asyncHandler(async (req, res, next) => {
   let token;
 
   if (
@@ -35,6 +36,6 @@ const guide = async (req, res, next) => {
       throw new Error("Not authorized, no token");
     }
   }
-};
+});
 
 module.exports = { guide, getToken };

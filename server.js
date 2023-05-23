@@ -5,6 +5,7 @@ const cors = require("cors");
 const userRouter = require("./routes/userRoute.js");
 const data = require("./utils/data");
 const { errorHandler } = require("./middleware/errorMiddleware");
+const foodRouter = require("./routes/foodRoute");
 
 // for env files
 dotenv.config();
@@ -20,6 +21,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 app.use("/api/users", userRouter);
+
+app.use("/api/foods", foodRouter);
 
 app.use(errorHandler);
 if (process.env.NODE_ENV === "production") {

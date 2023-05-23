@@ -10,8 +10,7 @@ const userRouter = express.Router();
 userRouter.post(
   "/register",
   asyncHandler(async (req, res) => {
-    // console.log(req.headers.authorization);
-    const { name, email, password } = req.body;
+    const { name, email, image, password } = req.body;
 
     if (!name || !email || !password) {
       res.status(400);
@@ -33,17 +32,20 @@ userRouter.post(
     const user = await User.create({
       name,
       email,
+      image,
       password: hashedPassword,
     });
 
     if (user) {
       res.status(201).json({
+        success: true,
         message: {
-          _id: user.id,
+          _id: user._id,
           name: user.name,
           email: user.email,
+          image: user.image,
           password: user.password,
-          token: getToken(user.id),
+          token: getToken(user._id),
         },
       });
     } else {
@@ -70,10 +72,10 @@ userRouter.post(
     if (user && (await bcrypt.compare(password, user.password))) {
       res.status(200).json({
         message: {
-          _id: user.id,
+          _id: user._id,
           name: user.name,
           email: user.email,
-          isAdmin: user.isAdmin,
+          image: user.image,
           token: getToken(user._id),
         },
       });
@@ -89,7 +91,7 @@ userRouter.get(
   "/:id",
   guide,
   asyncHandler(async (req, res) => {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.user._id);
     if (user) {
       res.status(200).send(user);
     } else {
@@ -104,12 +106,14 @@ userRouter.put(
   "/:id",
   guide,
   asyncHandler(async (req, res) => {
-    const { name, password } = req.body;
+    const { name, email, image, password } = req.body;
 
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.user._id);
 
     if (user) {
       user.name = name || user.name;
+      user.email = email || user.email;
+      user.image = image || user.image;
 
       if (password) {
         user.password = await bcrypt.hash(password, 10);
@@ -119,6 +123,8 @@ userRouter.put(
       res.status(200).send({
         _id: updatedUser.id,
         name: updatedUser.name,
+        email: updatedUser.email,
+        image: updatedUser.image,
         password: updatedUser.password,
         token: getToken(updatedUser),
       });
